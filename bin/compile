@@ -1,0 +1,72 @@
+#!/bin/bash
+
+SCRIPT_NAME=$(basename $0)
+SCRIPT_PATH=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+indent () {
+    sed -u 's/^/       /'
+}
+
+stdout () {
+    echo "-----> $@"
+}
+
+notify () {
+    stdout "# $@"
+}
+
+if [ $# -ne 3 ]
+then
+    notify "error: invalid number of arguments given to ${SCRIPT_NAME} script"
+    exit 1
+fi
+
+BUILD_DIR="$1"
+CACHE_DIR="$2"
+ENV_DIR="$3"
+
+ENJENV_BIN="${SCRIPT_PATH}/enjenv"
+if [ ! -f "${ENJENV_BIN}" ]
+then
+    notify "error: missing enjenv binary"
+    exit 1
+fi
+
+if [ ! -x "${ENJENV_BIN}" ]
+then
+    chmod +x "${ENJENV_BIN}"
+    if [ $? -ne 0 ]
+    then
+        notify "error: unable to chmod missing +x bit on ${ENJENV_BIN}"
+        exit 1
+    fi
+fi
+
+notify "exporting environment"
+
+[ -f "${ENV_DIR}/ENJENV_SLACK" ] && export ENJENV_SLACK="$(cat ${ENV_DIR}/ENJENV_SLACK)"
+[ -f "${ENV_DIR}/ENJENV_BUILDPACK_TARGETS" ] && export ENJENV_BUILDPACK_TARGETS="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_TARGETS)"
+[ -f "${ENV_DIR}/ENJENV_BUILDPACK_GOLANG" ] && export ENJENV_BUILDPACK_GOLANG="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_GOLANG)"
+[ -f "${ENV_DIR}/ENJENV_BUILDPACK_NODEJS" ] && export ENJENV_BUILDPACK_NODEJS="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_NODEJS)"
+
+stdout "    ENJENV_SLACK=${ENJENV_SLACK}"
+stdout "    ENJENV_BUILDPACK_TARGETS=${ENJENV_BUILDPACK_TARGETS}"
+stdout "    ENJENV_BUILDPACK_GOLANG=${ENJENV_BUILDPACK_GOLANG}"
+stdout "    ENJENV_BUILDPACK_NODEJS=${ENJENV_BUILDPACK_NODEJS}"
+
+cd "${BUILD_DIR}" > /dev/null
+
+[ ! -d "${CACHE_DIR}" ] && mkdir "${CACHE_DIR}" 2>&2 > /dev/null
+
+export ENJENV_PATH="${CACHE_DIR}/.enjenv"
+notify "starting enjenv buildpack"
+stdout "    ENJENV_PATH=${ENJENV_PATH}"
+
+export ENJENV_CUSTOM_INDENT="      "
+${ENJENV_BIN} buildpack --force
+if [ $? -ne 0 ]
+then
+    notify "enjenv buildpack ended with errors"
+else
+    notify "enjenv buildpack finished"
+fi

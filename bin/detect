@@ -1,0 +1,20 @@
+#!/bin/bash
+
+BUILD_DIR="$1"
+
+if [ -n "${BUILD_DIR}" ]
+then
+    if [ -d "${BUILD_DIR}" ]
+    then
+        if [ -f "${BUILD_DIR}/Makefile" ]
+        then
+            if [ -f "${BUILD_DIR}/Slugfile" ]
+            then
+                echo "enjenv slug environment detected"
+                exit 0
+            fi
+        fi
+    fi
+fi
+
+exit 1
