@@ -25,7 +25,7 @@ BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 
-ENJENV_BIN="${SCRIPT_PATH}/enjenv"
+export ENJENV_BIN="${SCRIPT_PATH}/enjenv"
 if [ ! -f "${ENJENV_BIN}" ]
 then
     notify "error: missing enjenv binary"
