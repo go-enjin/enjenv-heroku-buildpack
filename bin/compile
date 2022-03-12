@@ -44,24 +44,24 @@ fi
 
 notify "exporting environment"
 
-[ -f "${ENV_DIR}/ENJENV_SLACK" ] && export ENJENV_SLACK="$(cat ${ENV_DIR}/ENJENV_SLACK)"
-[ -f "${ENV_DIR}/ENJENV_BUILDPACK_TARGETS" ] && export ENJENV_BUILDPACK_TARGETS="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_TARGETS)"
-[ -f "${ENV_DIR}/ENJENV_BUILDPACK_GOLANG" ] && export ENJENV_BUILDPACK_GOLANG="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_GOLANG)"
-[ -f "${ENV_DIR}/ENJENV_BUILDPACK_NODEJS" ] && export ENJENV_BUILDPACK_NODEJS="$(cat ${ENV_DIR}/ENJENV_BUILDPACK_NODEJS)"
+if [ -d "${ENV_DIR}" ]
+then
+    cd "${ENV_DIR}" > /dev/null
+    for name in *
+    do
+        export ${name}="$(cat ${name})"
+        stdout "    ${name}"
+    done
+    cd - > /dev/null
+fi
 
-stdout "    ENJENV_SLACK=${ENJENV_SLACK}"
-stdout "    ENJENV_BUILDPACK_TARGETS=${ENJENV_BUILDPACK_TARGETS}"
-stdout "    ENJENV_BUILDPACK_GOLANG=${ENJENV_BUILDPACK_GOLANG}"
-stdout "    ENJENV_BUILDPACK_NODEJS=${ENJENV_BUILDPACK_NODEJS}"
+[ ! -d "${CACHE_DIR}" ] && mkdir "${CACHE_DIR}" 2>&2 > /dev/null
+export ENJENV_PATH="${CACHE_DIR}/.enjenv"
+stdout "    ENJENV_PATH=${ENJENV_PATH}"
 
 cd "${BUILD_DIR}" > /dev/null
 
-[ ! -d "${CACHE_DIR}" ] && mkdir "${CACHE_DIR}" 2>&2 > /dev/null
-
-export ENJENV_PATH="${CACHE_DIR}/.enjenv"
 notify "starting enjenv buildpack"
-stdout "    ENJENV_PATH=${ENJENV_PATH}"
-
 export ENJENV_CUSTOM_INDENT="      "
 ${ENJENV_BIN} buildpack --force
 if [ $? -ne 0 ]
