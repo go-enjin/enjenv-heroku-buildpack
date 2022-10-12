@@ -47,7 +47,7 @@ notify "exporting environment"
 if [ -d "${ENV_DIR}" ]
 then
     cd "${ENV_DIR}" > /dev/null
-    for name in *
+    for name in $(ls -1)
     do
         export ${name}="$(cat ${name})"
         stdout "    ${name}"
