@@ -67,6 +67,6 @@ ${ENJENV_BIN} buildpack --force
 if [ $? -ne 0 ]
 then
     notify "enjenv buildpack ended with errors"
-else
-    notify "enjenv buildpack finished"
+    exit 1
 fi
+notify "enjenv buildpack finished"
