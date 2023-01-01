@@ -6,11 +6,11 @@ if [ -n "${BUILD_DIR}" ]
 then
     if [ -d "${BUILD_DIR}" ]
     then
-        if [ -f "${BUILD_DIR}/Makefile" ]
+        if [ -f "${BUILD_DIR}/Enjin.mk" ]
         then
             if [ -f "${BUILD_DIR}/Slugfile" ]
             then
-                echo "enjenv slug environment detected"
+                echo "enjenv slug"
                 exit 0
             fi
         fi
