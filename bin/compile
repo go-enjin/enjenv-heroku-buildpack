@@ -25,7 +25,11 @@ BUILD_DIR="$1"
 CACHE_DIR="$2"
 ENV_DIR="$3"
 
-export ENJENV_BIN="${SCRIPT_PATH}/enjenv"
+SCRIPT_OS=$(uname | perl -pe '$_=lc')
+SCRIPT_ARCH=$(uname -m)
+[ "${SCRIPT_ARCH}" == "aarch64" ] && SCRIPT_ARCH="arm64"
+
+export ENJENV_BIN="${SCRIPT_PATH}/enjenv.${SCRIPT_OS}.${SCRIPT_ARCH}"
 if [ ! -f "${ENJENV_BIN}" ]
 then
     notify "error: missing enjenv binary"
