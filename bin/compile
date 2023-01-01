@@ -26,8 +26,25 @@ CACHE_DIR="$2"
 ENV_DIR="$3"
 
 SCRIPT_OS=$(uname | perl -pe '$_=lc')
+if [ "${SCRIPT_OS}" != "linux" ]
+then
+    notify "error: unsupported operating system - ${SCRIPT_OS}"
+    exit 1
+fi
+
 SCRIPT_ARCH=$(uname -m)
-[ "${SCRIPT_ARCH}" == "aarch64" ] && SCRIPT_ARCH="arm64"
+case "${SCRIPT_ARCH}" in
+    "aarch64"|"arm64")
+        SCRIPT_ARCH="arm64"
+        ;;
+    "x86_64"|"amd64")
+        SCRIPT_ARCH="amd64"
+        ;;
+    *)
+        notify "error: unsupported archicture - ${SCRIPT_ARCH}"
+        exit 1
+        ;;
+esac
 
 export ENJENV_BIN="${SCRIPT_PATH}/enjenv.${SCRIPT_OS}.${SCRIPT_ARCH}"
 if [ ! -f "${ENJENV_BIN}" ]
