@@ -32,7 +32,7 @@ SCRIPT_ARCH=$(uname -m)
 export ENJENV_BIN="${SCRIPT_PATH}/enjenv.${SCRIPT_OS}.${SCRIPT_ARCH}"
 if [ ! -f "${ENJENV_BIN}" ]
 then
-    notify "error: missing enjenv binary"
+    notify "error: missing enjenv binary: ${ENJENV_BIN}"
     exit 1
 fi
 
