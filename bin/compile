@@ -46,7 +46,7 @@ case "${SCRIPT_ARCH}" in
         ;;
 esac
 
-export ENJENV_BIN="${SCRIPT_PATH}/enjenv.${SCRIPT_OS}.${SCRIPT_ARCH}"
+export ENJENV_BIN="${SCRIPT_PATH}/${SCRIPT_OS}-${SCRIPT_ARCH}/enjenv"
 if [ ! -f "${ENJENV_BIN}" ]
 then
     notify "error: missing enjenv binary: ${ENJENV_BIN}"
